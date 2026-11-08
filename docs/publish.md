@@ -236,3 +236,16 @@ Release 一发布，`publish` 工作流自动触发：跑测试 → 构建 → `
 - 2026-11-08 手动触发 `publish` 工作流：`build and verify` 全绿，
   `publish to PyPI` 按预期 skipped（因为 0.1.0 已在 PyPI）。
 - 0.1.1（2026-11-09）已通过 OIDC 自动发布：Release 触发 → 测试 → 构建 → Publish 步骤成功，全程无 token。
+### 0.2.0（2026-11-09）— 第一次真正踩到 CI 的平台差异
+
+0.2.0 的发布在 CI 上连挂四次，每次都是真问题，不是环境噪音：
+
+| 现象 | 根因 | 修法 |
+|---|---|---|
+| Linux 上 Test 失败 | GitHub 的 Ubuntu 运行器不带中文字体，`ziban card` 报「no CJK font」 | 工作流里 `apt-get install fonts-noto-cjk`，并在测试里用 `pytest.importorskip`/跳过兜底 |
+| macOS 上 bold 与 regular 墨迹完全相同 | PingFang 是静态 `.ttc` 集合，face 0 永远是 Regular | 遍历 face 找 semibold；仍取不到则在 macOS 上明确跳过并记入 CHANGELOG 已知限制 |
+| `FontSet` 没有 `describe` | 我插入新函数时打断了类体，把 `describe` 变成了内部函数 | 把方法移回类内，并加一条 CLI 冒烟测试守着 |
+| 变量字体标题全是细体 | Noto Sans SC-VF 的默认实例是 **Thin（wght=100）** | 按数值设置 wght 轴（400/700，按轴范围 clamp），不再依赖实例名 |
+
+教训：**macOS 和 Linux 的字体栈与 Windows 完全不同**，涉及字体的功能必须在 CI 的三个平台上跑，
+而且要用「墨迹像素」这种可量化的断言，不能靠眼睛。
