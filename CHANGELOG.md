@@ -4,9 +4,10 @@ All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning follows [Semantic Versioning](https://semver.org/).
 
-## [0.1.0] — unreleased
+## [0.1.0] — 2026-11-08
 
 First public cut: the breaker works, the CLI works, the ruleset is data.
+Published to PyPI as <https://pypi.org/project/ziban/0.1.0/>.
 
 ### Added
 

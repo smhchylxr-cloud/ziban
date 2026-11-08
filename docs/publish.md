@@ -1,5 +1,9 @@
 # 发布手册（写给第一次发开源项目的人）
 
+> **状态：已完成。** 0.1.0 于 2026-11-08 上传成功，
+> <https://pypi.org/project/ziban/0.1.0/> ，并在全新虚拟环境验证
+> `pip install ziban` 可用。下文保留完整流程，供 0.2 复用。
+
 这份文件回答两个问题：**这个项目归谁**、**它怎么被全世界 `pip install` 到**。
 不需要任何前置知识，照做即可。
 
@@ -134,3 +138,55 @@ pip install --index-url https://test.pypi.org/simple/ ziban
 
 **版本号规则**：`0.1.0` → 修 bug 发 `0.1.1` → 加功能发 `0.2.0` → 稳定后 `1.0.0`。
 发出去的版本永远不要试图覆盖，改错了就发下一个。
+
+---
+
+## 六、0.1.0 实际执行记录（2026-11-08）
+
+留档，因为踩到的坑下次还会踩。
+
+| 步骤 | 结果 |
+|---|---|
+| `python -m build` | `ziban-0.1.0.tar.gz` 85 KB + `ziban-0.1.0-py3-none-any.whl` 23 KB |
+| `twine check dist/*` | 两个文件均 PASSED |
+| 干净 venv 装 wheel | 通过，`ziban wrap` 正常 |
+| `twine upload` | 第一次失败，见下 |
+| 上传成功 | <https://pypi.org/project/ziban/0.1.0/> |
+| 从 PyPI 全新安装 | `pip install ziban` → 0.1.0，CLI 正常 |
+| 包名归属 | `ziban` 已被本账号锁定 |
+
+### 坑一：Windows 控制台的 GBK 编码把 twine 搞崩了
+
+第一次上传直接挂在这行：
+
+```
+UnicodeEncodeError: 'gbk' codec can't encode character '\u2022'
+```
+
+`rich`（twine 的进度条依赖）在 Windows 传统控制台里用 GBK 写 `•` 失败。
+**修法**：上传前设环境变量
+
+```powershell
+$env:PYTHONUTF8 = "1"
+$env:PYTHONIOENCODING = "utf-8"
+```
+
+注意此时包**并没有传上去**（进度条画到 0% 就崩了），所以重试是安全的，不是重复发布。
+
+### 坑二：token 只显示一次，别指望回头再抄
+
+PyPI 的 token 页面刷新或离开后就再也看不到明文。所以拿到后**立刻**用掉，
+或者存进密码管理器。本次是通过页面的 "Copy token" 按钮 → 读剪贴板 → 直接写文件，
+全程没有人工转录，避免 179 个字符里抄错一个。
+
+### 遗留事项：撤销那个 token
+
+本次使用的 `ziban-upload` token 仍然有效。PyPI 撤销 token **需要输入账户密码**，
+所以这一步只能账号持有人做：
+
+1. <https://pypi.org/manage/account/token/>
+2. `ziban-upload` 那一行的 **Remove token**
+3. 输入密码确认
+
+下一次发布前再建一个即可；更好的做法是等 GitHub 仓库建好后改用
+**Trusted Publishing**（OIDC，GitHub Actions 直接发布，不存任何 token）。

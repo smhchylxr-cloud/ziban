@@ -35,10 +35,14 @@
 
 ## 安装
 
+[![PyPI](https://img.shields.io/pypi/v/ziban.svg)](https://pypi.org/project/ziban/)
+
 ```bash
 pip install ziban              # 核心，零依赖
 pip install "ziban[pillow]"    # 需要用真实字体度量时
 ```
+
+已发布：<https://pypi.org/project/ziban/>
 
 Python 3.9+。不要浏览器、不要编译、不要 ICU、不要模型。
 
@@ -146,8 +150,8 @@ max_share = 0.25
 
 ## 状态
 
-`0.1.0` —— 横排引擎完成，958 个测试全绿（24 段语料 × 6 种行宽 × 6 条不变量，
-外加金标用例）。尚未发布到 PyPI。
+`0.1.0` —— 已发布到 PyPI。横排引擎完成，958 个测试全绿（24 段语料 × 6 种行宽 ×
+6 条不变量，外加金标用例）。
 
 接下来：
 

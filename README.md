@@ -43,10 +43,14 @@ better or worse.
 
 ## Install
 
+[![PyPI](https://img.shields.io/pypi/v/ziban.svg)](https://pypi.org/project/ziban/)
+
 ```bash
 pip install ziban              # core, zero dependencies
 pip install "ziban[pillow]"    # + measuring with real font files
 ```
+
+Published at <https://pypi.org/project/ziban/>.
 
 Python 3.9+. No browser, no native build, no ICU, no model.
 
@@ -159,9 +163,9 @@ whether the break is typographically legal. They compose.
 
 ## Status
 
-`0.1.0` — engine complete for horizontal text, 958 tests green
-(144 corpus × width combinations (24 paragraphs × 6 measures) checked against six invariants, plus golden
-cases). Not yet on PyPI.
+`0.1.0` — published on PyPI. Engine complete for horizontal text; 958 tests
+green (144 corpus × width combinations — 24 paragraphs × 6 measures — checked
+against six invariants, plus golden cases).
 
 Next:
 
