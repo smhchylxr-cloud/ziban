@@ -181,6 +181,8 @@ PyPI 的 token 页面刷新或离开后就再也看不到明文。所以拿到�
 
 ### 遗留事项：撤销那个 token
 
+**（已被第七节取代：现在不再需要任何 token。）**
+
 本次使用的 `ziban-upload` token 仍然有效。PyPI 撤销 token **需要输入账户密码**，
 所以这一步只能账号持有人做：
 
@@ -188,5 +190,49 @@ PyPI 的 token 页面刷新或离开后就再也看不到明文。所以拿到�
 2. `ziban-upload` 那一行的 **Remove token**
 3. 输入密码确认
 
-下一次发布前再建一个即可；更好的做法是等 GitHub 仓库建好后改用
-**Trusted Publishing**（OIDC，GitHub Actions 直接发布，不存任何 token）。
+---
+
+## 七、Trusted Publishing（OIDC）：以后一个 token 都不存
+
+0.1.0 是手动 token 上传的。之后切到了 **Trusted Publishing**：
+GitHub Actions 每次发版时向 PyPI 出示一张**短时 OIDC 令牌**，PyPI 核对
+「哪个仓库、哪个工作流、哪个环境」之后才接受上传。没有长期密钥可泄露。
+
+### 三方怎么对上
+
+| 位置 | 配了什么 |
+|---|---|
+| PyPI → 项目 ziban → Publishing | owner `smhchylxr-cloud`、repo `ziban`、workflow `publish.yml`、environment `pypi` |
+| 仓库 `.github/workflows/publish.yml` | `permissions: id-token: write`、`environment: pypi`、`pypa/gh-action-pypi-publish@release/v1` |
+| GitHub 仓库环境 | `pypi`（首次运行自动创建；可加 required reviewers 变成人工闸门） |
+
+**三处必须逐字一致**，尤其是 workflow 文件名——写错一个字，PyPI 就会拒绝，
+而且报错只会在发布那一刻才出现。
+
+### 发版流程（以后就这三步）
+
+```bash
+# 1. 改版本号：pyproject.toml 与 src/ziban/__init__.py 必须一致
+# 2. 提交、打 tag、推送
+git add -A && git commit -m "release: 0.1.1"
+git tag v0.1.1 && git push && git push --tags
+# 3. 在 GitHub 上把 tag 发成 Release（Publish release）
+```
+
+Release 一发布，`publish` 工作流自动触发：跑测试 → 构建 → `twine check` →
+上传 PyPI。全程无人值守，也不需要任何密钥。
+
+### 工作流里的两个设计
+
+1. **版本已存在就跳过，不报错。** `Decide whether this version still needs
+   publishing` 会先查 `https://pypi.org/pypi/ziban/<version>/json`：
+   200 就 `publish=false`，`publish` job 直接 skipped。这样手动触发
+   （`workflow_dispatch`）可以当冒烟测试用，跑完是绿的。
+2. **发布前一定跑测试与 `twine check`。** 元数据渲染失败在 PyPI 上是不可撤销的
+   （版本号会被消耗），必须在本地阶段拦住。
+
+### 已验证
+
+- 2026-11-08 手动触发 `publish` 工作流：`build and verify` 全绿，
+  `publish to PyPI` 按预期 skipped（因为 0.1.0 已在 PyPI）。
+- 真正走 OIDC 上传的第一次，会是 0.1.1。
