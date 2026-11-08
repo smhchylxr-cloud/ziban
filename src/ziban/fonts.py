@@ -141,6 +141,12 @@ class FontSet:
         from PIL import ImageFont
 
         path = {"regular": self.regular, "bold": self.bold, "mono": self.mono}[weight]
+
+        if weight == "bold":
+            face = _bold_face_from_collection(path, size)
+            if face is not None:
+                return face
+
         font = ImageFont.truetype(str(path), int(round(size)))
 
         # Variable fonts expose every weight from one file, and their *default*
@@ -161,6 +167,29 @@ class FontSet:
                     # Not a variable font (a real bold file was chosen instead).
                     continue
         return font
+
+
+def _bold_face_from_collection(path: Path, size: float):
+    """Pick a bold face out of a .ttc collection (PingFang, Noto CJK).
+
+    A ``.ttc`` holds several faces in one file; loading it without an index
+    always returns face 0 (Regular), so asking for bold used to render exactly
+    like regular on macOS.  Walking the faces and matching the style name is
+    what makes bold actually bold there.
+    """
+    from PIL import ImageFont
+
+    if path.suffix.lower() not in (".ttc", ".otc"):
+        return None
+    for index in range(10):
+        try:
+            face = ImageFont.truetype(str(path), int(round(size)), index=index)
+        except OSError:
+            return None
+        style = (face.getname()[1] or "").lower()
+        if "semibold" in style or "bold" in style:
+            return face
+    return None
 
     def describe(self) -> str:
         return f"{self.regular.name} / {self.bold.name} / {self.mono.name}"
