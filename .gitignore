@@ -9,3 +9,9 @@ venv/
 .idea/
 .vscode/
 .DS_Store
+
+# tool output that must never be committed
+.dsh-pilot/
+*.log
+.coverage
+htmlcov/

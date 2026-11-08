@@ -42,7 +42,7 @@
 
 如果**没有**，注册时注意三点：
 
-- 用**中性、可长期用**的名字（`chenh`、`ziban-dev` 这类），别用带年份或中二的昵称——
+- 用**中性、可长期用**的名字（`yourname`、`ziban-dev` 这类），别用带年份或中二的昵称——
   这个名字会出现在每一个 issue、每一次 commit、PyPI 的元数据里，五年后还在。
 - **邮箱用 GitHub 的 noreply 地址**（设置里勾 "Keep my email addresses private"），
   否则你的真实邮箱会被爬虫抓走，然后开始收垃圾邮件。
