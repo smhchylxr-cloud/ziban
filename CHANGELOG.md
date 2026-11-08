@@ -4,6 +4,23 @@ All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] — 2026-11-09
+
+Packaging and metadata only; the engine is unchanged. First release published
+by GitHub Actions through Trusted Publishing (OIDC) — no API token involved.
+
+### Added
+
+- Project links on PyPI (Homepage, Repository, Issues, Changelog).
+- `build` and `twine` in the `dev` extra, so `pip install -e ".[dev]"` can
+  build and check a release without extra installs.
+
+### Changed
+
+- `.gitignore` also covers tool output (`.dsh-pilot/`, `*.log`, coverage).
+- Removed a local username from the publishing handbook; a public repo should
+  not carry the machine account name.
+
 ## [0.1.0] — 2026-11-08
 
 First public cut: the breaker works, the CLI works, the ruleset is data.

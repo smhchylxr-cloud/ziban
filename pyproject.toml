@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ziban"
-version = "0.1.0"
+version = "0.1.1"
 description = "CJK typesetting for programmatic renderers: line breaking, kinsoku, punctuation compression, hanging punctuation."
 readme = "README.md"
 requires-python = ">=3.9"
