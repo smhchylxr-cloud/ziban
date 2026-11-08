@@ -34,6 +34,19 @@ card layouts that use it.
   plausible.  The weight axis is now selected explicitly for both regular and
   bold; `test_bold_is_actually_bolder` guards the regression.
 
+- **Bold in `.ttc` collections.** macOS PingFang and Noto CJK ship several
+  faces in one file; loading without an index always returns face 0, so bold
+  rendered exactly like regular.  The loader now walks the faces and matches a
+  semibold/bold style name.
+
+### Known limitations
+
+- **macOS PingFang still has no reachable bold face.** Pillow cannot address
+  the semibold face of that collection reliably, so headings fall back to
+  regular weight there.  Windows (Noto VF / YaHei Bold) and Linux
+  (Noto CJK Bold) are unaffected.  Planned for 0.3: synthetic bold via
+  `stroke_width`, or an explicit face index in `FontSet`.
+
 ## [0.1.1] — 2026-11-09
 
 Packaging and metadata only; the engine is unchanged. First release published
