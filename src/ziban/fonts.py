@@ -168,6 +168,9 @@ class FontSet:
                     continue
         return font
 
+    def describe(self) -> str:
+        return f"{self.regular.name} / {self.bold.name} / {self.mono.name}"
+
 
 def _bold_face_from_collection(path: Path, size: float):
     """Pick a bold face out of a .ttc collection (PingFang, Noto CJK).
@@ -190,6 +193,3 @@ def _bold_face_from_collection(path: Path, size: float):
         if "semibold" in style or "bold" in style:
             return face
     return None
-
-    def describe(self) -> str:
-        return f"{self.regular.name} / {self.bold.name} / {self.mono.name}"
