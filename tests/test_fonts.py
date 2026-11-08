@@ -43,8 +43,8 @@ def _can_go_bolder(fonts: FontSet) -> bool:
         return True  # a distinct bold file
     face = fonts.load(72, weight="bold")
     try:
-        if face.get_variation_names():
-            return True  # variable font: the weight axis can be set
+        if face.get_variation_axes():
+            return True  # variable font: the weight axis can be set numerically
     except Exception:
         pass
     style = (face.getname()[1] or "").strip().lower()
