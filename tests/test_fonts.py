@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pytest
@@ -37,20 +38,6 @@ def test_discover_finds_three_files_or_skips():
     assert find_bold().exists()
 
 
-def _can_go_bolder(fonts: FontSet) -> bool:
-    """True when this machine actually offers a bolder face than regular."""
-    if fonts.bold.resolve() != fonts.regular.resolve():
-        return True  # a distinct bold file
-    face = fonts.load(72, weight="bold")
-    try:
-        if face.get_variation_axes():
-            return True  # variable font: the weight axis can be set numerically
-    except Exception:
-        pass
-    style = (face.getname()[1] or "").strip().lower()
-    return style not in ("", "regular", "book")
-
-
 def test_bold_is_actually_bolder():
     """A variable font's default instance is not always Regular.
 
@@ -67,12 +54,16 @@ def test_bold_is_actually_bolder():
     except RuntimeError as exc:  # pragma: no cover
         pytest.skip(str(exc))
 
-    if not _can_go_bolder(fonts):
-        pytest.skip(f"{fonts.regular.name} exposes no bolder face on this platform")
-
     regular_ink = _ink(fonts.load(72, weight="regular"))
     bold_ink = _ink(fonts.load(72, weight="bold"))
     assert regular_ink > 0
+
+    if bold_ink == regular_ink and sys.platform == "darwin":
+        # PingFang.ttc is a static collection whose semibold face Pillow cannot
+        # address; documented in CHANGELOG under known limitations.  Skipping
+        # here keeps the guard strict on Windows and Linux (Noto VF / Noto CJK).
+        pytest.skip("macOS PingFang exposes no reachable bold face (known limitation)")
+
     assert bold_ink > regular_ink * 1.2, f"bold ink {bold_ink} vs regular {regular_ink} — weight not applied"
 
 
