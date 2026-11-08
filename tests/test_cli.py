@@ -82,6 +82,13 @@ def test_themes_are_listed():
 
 def test_card_renders_a_spec(tmp_path: Path):
     pytest.importorskip("PIL", reason="card rendering needs Pillow")
+    from ziban.fonts import FontSet
+
+    try:
+        FontSet.discover()
+    except RuntimeError as exc:  # pragma: no cover - depends on the machine
+        pytest.skip(str(exc))
+
     spec = Path(__file__).resolve().parents[1] / "examples" / "cards" / "specs" / "cover.json"
     out = tmp_path / "card.png"
     proc = run(["card", str(spec), "--theme", "ink", "--out", str(out)])
