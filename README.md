@@ -160,7 +160,7 @@ whether the break is typographically legal. They compose.
 ## Status
 
 `0.1.0` — engine complete for horizontal text, 958 tests green
-(168 corpus × width combinations checked against six invariants, plus golden
+(144 corpus × width combinations (24 paragraphs × 6 measures) checked against six invariants, plus golden
 cases). Not yet on PyPI.
 
 Next:
