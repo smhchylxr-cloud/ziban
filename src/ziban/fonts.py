@@ -151,25 +151,60 @@ class FontSet:
 
         # Variable fonts expose every weight from one file, and their *default*
         # instance is not always Regular — Noto Sans SC-VF defaults to Thin
-        # (weight 100), which silently renders every card in a hairline weight.
-        # So the axis is set explicitly, for regular as well as bold.
+        # (weight 100), which renders every card in a hairline weight while
+        # still looking plausible.  So the axis is set explicitly.
+        #
+        # Set it *numerically*: instance names differ between vendors
+        # ("Bold" vs "Semibold" vs "SemiBold"), and a name that does not match
+        # fails silently — exactly how bold stopped working on macOS.
         if weight in ("regular", "bold"):
-            wanted = (
-                ("Bold", "SemiBold", "Medium", "DemiBold")
-                if weight == "bold"
-                else ("Regular", "Medium", "Light")
-            )
-            for instance in wanted:
-                try:
-                    font.set_variation_by_name(instance)
-                    break
-                except Exception:
-                    # Not a variable font (a real bold file was chosen instead).
-                    continue
+            if not _set_weight(font, 700.0 if weight == "bold" else 400.0):
+                for instance in (
+                    ("Bold", "SemiBold", "Semibold", "Medium")
+                    if weight == "bold"
+                    else ("Regular", "Medium", "Light")
+                ):
+                    try:
+                        font.set_variation_by_name(instance)
+                        break
+                    except Exception:
+                        continue
         return font
 
     def describe(self) -> str:
         return f"{self.regular.name} / {self.bold.name} / {self.mono.name}"
+
+
+def _set_weight(font, target: float) -> bool:
+    """Set the ``wght`` axis (or ``Weight``) to ``target``, clamped to its range."""
+    try:
+        axes = font.get_variation_axes()
+    except Exception:
+        return False
+    if not axes:
+        return False
+
+    values = []
+    for axis in axes:
+        name = axis.get("name", b"")
+        if isinstance(name, (bytes, bytearray)):
+            name = name.decode("utf-8", "ignore")
+        try:
+            low = float(axis["minimum"])
+            default = float(axis["default"])
+            high = float(axis["maximum"])
+        except (KeyError, TypeError, ValueError):
+            return False
+        if str(name).strip().lower() in ("weight", "wght"):
+            values.append(max(low, min(high, target)))
+        else:
+            values.append(default)
+
+    try:
+        font.set_variation_by_axes(values)
+        return True
+    except Exception:
+        return False
 
 
 def _bold_face_from_collection(path: Path, size: float):
