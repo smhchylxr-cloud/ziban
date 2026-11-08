@@ -12,6 +12,8 @@ canvas — still reimplements it badly, because there is nothing to ask.
 a box into lines a Chinese typesetter would accept — and tells you, in machine
 readable form, every time it had to compromise.
 
+![Same text, same column: naive chunking on the left, ziban on the right](docs/compare.png)
+
 ## The problem, in eight seconds
 
 Naive `if len(s) > N: cut()`:
@@ -33,6 +35,11 @@ The first version starts a line with `」`. That is not a matter of taste:
 punctuation at line start (避头) and opening punctuation at line end (避尾).
 Every renderer that is not a browser quietly breaks that rule — and the
 punctuation it breaks is exactly the punctuation readers notice.
+
+The image above is generated, not drawn by hand:
+`python examples/compare.py --font <path-to-a-CJK-font>`. Re-run it after any
+change to the rules and you will see immediately whether the typography got
+better or worse.
 
 ## Install
 
