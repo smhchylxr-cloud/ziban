@@ -235,4 +235,4 @@ Release 一发布，`publish` 工作流自动触发：跑测试 → 构建 → `
 
 - 2026-11-08 手动触发 `publish` 工作流：`build and verify` 全绿，
   `publish to PyPI` 按预期 skipped（因为 0.1.0 已在 PyPI）。
-- 真正走 OIDC 上传的第一次，会是 0.1.1。
+- 0.1.1（2026-11-09）已通过 OIDC 自动发布：Release 触发 → 测试 → 构建 → Publish 步骤成功，全程无 token。
