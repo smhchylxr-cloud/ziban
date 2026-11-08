@@ -39,6 +39,12 @@ dev = ["pytest>=7.0", "pillow>=9.0"]
 [project.scripts]
 ziban = "ziban.cli:main"
 
+[project.urls]
+Homepage = "https://pypi.org/project/ziban/"
+Repository = "https://github.com/smhchylxr-cloud/ziban"
+Issues = "https://github.com/smhchylxr-cloud/ziban/issues"
+Changelog = "https://github.com/smhchylxr-cloud/ziban/blob/main/CHANGELOG.md"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/ziban"]
 

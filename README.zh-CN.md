@@ -36,6 +36,8 @@
 ## 安装
 
 [![PyPI](https://img.shields.io/pypi/v/ziban.svg)](https://pypi.org/project/ziban/)
+[![ci](https://github.com/smhchylxr-cloud/ziban/actions/workflows/ci.yml/badge.svg)](https://github.com/smhchylxr-cloud/ziban/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ```bash
 pip install ziban              # 核心，零依赖
