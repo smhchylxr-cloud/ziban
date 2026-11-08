@@ -103,6 +103,15 @@ def _build_parser() -> argparse.ArgumentParser:
 
     rules = sub.add_parser("rules", help="show the active ruleset")
     rules.add_argument("--json", action="store_true")
+
+    card = sub.add_parser("card", help="render a card spec (JSON) to PNG")
+    card.add_argument("spec", help="path to a card spec JSON file")
+    card.add_argument("--theme", default="ikb", help="ikb | ink | citron (default: ikb)")
+    card.add_argument("--out", default=None, help="output PNG (default: next to the spec)")
+    card.add_argument("--width", type=int, default=1080, help="canvas width in px")
+    card.add_argument("--font", default=None, help="path to a CJK font file")
+
+    themes = sub.add_parser("themes", help="list the built-in themes")
     return parser
 
 
@@ -192,6 +201,52 @@ def _cmd_rules(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_themes(_args: argparse.Namespace) -> int:
+    from .theme import THEMES
+
+    for name in sorted(THEMES):
+        theme = THEMES[name]
+        print(f"{name:<8} {theme.label:<18} bg={theme.bg} ink={theme.ink} accent={theme.accent}")
+    return 0
+
+
+def _cmd_card(args: argparse.Namespace) -> int:
+    import json
+
+    from .cards import CANVAS, render_card
+    from .fonts import FontSet
+    from .theme import get as get_theme
+
+    spec_path = Path(args.spec)
+    if not spec_path.exists():
+        print(f"ziban: spec not found: {spec_path}", file=sys.stderr)
+        return 2
+    try:
+        spec = json.loads(spec_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        print(f"ziban: {spec_path.name} is not valid JSON ({exc})", file=sys.stderr)
+        return 2
+
+    try:
+        fonts = FontSet.from_path(args.font) if args.font else FontSet.discover()
+    except (RuntimeError, FileNotFoundError) as exc:
+        print(f"ziban: {exc}", file=sys.stderr)
+        return 2
+
+    theme = get_theme(args.theme)
+    width = max(200, args.width)
+    canvas = (width, int(round(width * CANVAS[1] / CANVAS[0])))
+    image, issues = render_card(spec, theme, fonts, canvas)
+
+    out = Path(args.out) if args.out else spec_path.with_suffix(".png")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    image.save(out, optimize=True)
+    print(f"wrote {out} ({image.width}x{image.height}, theme={theme.name}, fonts={fonts.describe()})")
+    for issue in issues:
+        print(f"  [{issue.code}] {issue.message}")
+    return 2 if any(issue.code == "TEXT_OVERFLOW" for issue in issues) else 0
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -199,6 +254,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return _cmd_wrap(args)
     if args.command == "rules":
         return _cmd_rules(args)
+    if args.command == "card":
+        return _cmd_card(args)
+    if args.command == "themes":
+        return _cmd_themes(args)
     parser.print_help()
     return 0
 

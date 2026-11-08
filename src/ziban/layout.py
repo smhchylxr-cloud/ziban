@@ -183,7 +183,7 @@ class Layout:
         return "\n".join(ln.text for ln in self.lines)
 
 
-def _clusters(paragraph: str) -> List[str]:
+def clusters(paragraph: str) -> List[str]:
     """Split into unbreakable clusters; combining marks join the previous one."""
     out: List[str] = []
     for ch in paragraph:
@@ -428,18 +428,18 @@ def layout(
             offset += 1
             continue
 
-        clusters = _clusters(paragraph)
-        widths = [metrics.advance(c) + style.letter_spacing for c in clusters]
+        units = clusters(paragraph)
+        widths = [metrics.advance(c) + style.letter_spacing for c in units]
         if not widths:  # pragma: no cover - guarded by paragraph == ""
             offset += len(paragraph) + 1
             continue
 
-        can_break_before: List[bool] = [False] * (len(clusters) + 1)
-        for k in range(1, len(clusters)):
-            can_break_before[k] = can_break(clusters[k - 1], clusters[k])
-        can_break_before[len(clusters)] = True
+        can_break_before: List[bool] = [False] * (len(units) + 1)
+        for k in range(1, len(units)):
+            can_break_before[k] = can_break(units[k - 1], units[k])
+        can_break_before[len(units)] = True
 
-        breaker = _Breaker(clusters, widths, can_break_before, width, style, rules)
+        breaker = _Breaker(units, widths, can_break_before, width, style, rules)
         para_lines, para_diags = breaker.run(offset)
 
         if para_lines:

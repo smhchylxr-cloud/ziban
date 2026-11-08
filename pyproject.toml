@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ziban"
-version = "0.1.1"
+version = "0.2.0"
 description = "CJK typesetting for programmatic renderers: line breaking, kinsoku, punctuation compression, hanging punctuation."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -47,6 +47,14 @@ Changelog = "https://github.com/smhchylxr-cloud/ziban/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ziban"]
+
+[tool.hatch.build.targets.sdist]
+# The rendered demo cards live in the repo for the README, but they are
+# regenerable with `python examples/cards/build.py` and would triple the
+# sdist size for no benefit.
+exclude = [
+  "examples/cards/out/*.png",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

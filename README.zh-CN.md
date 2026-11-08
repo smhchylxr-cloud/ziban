@@ -11,7 +11,7 @@
 `ziban` 就是那个地方：一个纯 Python 的中文排版引擎，把「一段文字 + 一个盒子」
 变成排版师认可的若干行，并且在每次不得不妥协时，给出机器可读的说明。
 
-![同一段文字、同一个栏宽：左边按字数硬切，右边是 ziban](docs/compare.png)
+![同一段文字、同一个栏宽：左边按字数硬切，右边是 ziban](https://raw.githubusercontent.com/smhchylxr-cloud/ziban/main/docs/compare.png)
 
 ## 八秒钟看懂问题
 
@@ -95,6 +95,18 @@ line.overflow      # 超出盒子的像素，放得下就是 0
 line.justify_spacing
 ```
 
+### 四个版式，三套主题
+
+![十二张卡片：四版式 × 三主题](https://raw.githubusercontent.com/smhchylxr-cloud/ziban/main/examples/cards/out/contact-sheet.png)
+
+```bash
+python examples/cards/build.py                                          # 渲染全部 12 张 + 联系表
+ziban card examples/cards/specs/cover.json --theme ink --out cover.png
+```
+
+spec 就是一段 JSON，`kind` 取 `cover` / `list` / `steps` / `note`；
+主题 `ikb`（米白纸+克莱因蓝）/ `ink`（墨黑+朱橙）/ `citron`（柠檬黄）。
+文字块放不下会自动缩字号，缩到极限仍放不下才报 `TEXT_OVERFLOW`——**绝不静默裁切**。
 ## 它做了什么
 
 | | |
@@ -152,15 +164,14 @@ max_share = 0.25
 
 ## 状态
 
-`0.1.0` —— 已发布到 PyPI。横排引擎完成，958 个测试全绿（24 段语料 × 6 种行宽 ×
-6 条不变量，外加金标用例）。
+`0.2.0` —— 已发布到 PyPI。断行引擎 + 绘制层 + 四个卡片版式，994 个测试全绿
+（24 段语料 × 6 种行宽 × 6 条不变量，外加金标、渲染与 10 万字压力测试）。
 
 接下来：
 
-- **0.2** 跨平台字体探测；连续标点挤压（「。」占一个 em）；Knuth–Plass 式代价断行，
-  让最后一行不再孤零零
-- **0.3** 适配器：ReportLab、SVG、`python-pptx`；竖排放到开关后面
-- **0.4** `cards` 示例：真正渲染 1080×1440 组图；再包一层 `SKILL.md` 让 agent 能调用
+- **0.3** 字体探测扩展到自定义目录；连续标点挤压（「。」占一个 em）；
+  Knuth–Plass 式代价断行，让最后一行不再孤零零
+- **0.4** 适配器：ReportLab、SVG、`python-pptx`；竖排放到开关后面
 
 ## 许可
 

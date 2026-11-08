@@ -12,7 +12,7 @@ canvas — still reimplements it badly, because there is nothing to ask.
 a box into lines a Chinese typesetter would accept — and tells you, in machine
 readable form, every time it had to compromise.
 
-![Same text, same column: naive chunking on the left, ziban on the right](docs/compare.png)
+![Same text, same column: naive chunking on the left, ziban on the right](https://raw.githubusercontent.com/smhchylxr-cloud/ziban/main/docs/compare.png)
 
 ## The problem, in eight seconds
 
@@ -104,6 +104,37 @@ line.overflow      # pixels past the box, 0 if it fits
 line.justify_spacing
 ```
 
+### Four card layouts, three themes
+
+![Twelve cards: four layouts in three themes](https://raw.githubusercontent.com/smhchylxr-cloud/ziban/main/examples/cards/out/contact-sheet.png)
+
+```bash
+python examples/cards/build.py     # renders all 12 + the sheet above
+ziban card examples/cards/specs/cover.json --theme ink --out cover.png
+```
+
+A spec is plain JSON — `kind` is one of `cover` / `list` / `steps` / `note`:
+
+```json
+{
+  "kind": "cover",
+  "kicker": "003 / MAGPIE",
+  "title": "把所有 agent 的模型入口，收成一处",
+  "subtitle": "不是又一个聊天框。",
+  "meta": "2026-11-09"
+}
+```
+
+Themes: `ikb` (paper + Klein blue), `ink` (near-black + orange), `citron`
+(acid yellow).  If a block does not fit its slot the size steps down until it
+does, and **only then** does it report `TEXT_OVERFLOW` — a card is never
+silently clipped.  Boundaries are checked, not eyeballed:
+
+```
+$ ziban card spec.json --theme ink
+wrote spec.png (1080x1440, theme=ink, fonts=NotoSansSC-VF.ttf / …)
+```
+
 ## What it does
 
 | | |
@@ -165,18 +196,16 @@ whether the break is typographically legal. They compose.
 
 ## Status
 
-`0.1.0` — published on PyPI. Engine complete for horizontal text; 958 tests
-green (144 corpus × width combinations — 24 paragraphs × 6 measures — checked
-against six invariants, plus golden cases).
+`0.2.0` — published on PyPI.  Breaker complete for horizontal text; a drawing
+layer and four card templates on top of it.  994 tests green (144 corpus ×
+width combinations — 24 paragraphs × 6 measures — checked against six
+invariants, plus golden cases, rendering tests and a 100k-character stress test).
 
 Next:
 
-- **0.2** font probing across Windows/macOS/Linux, pair compression (「。」 in
-  one em), a Knuth–Plass-style cost function so the last line stops being an
-  orphan
-- **0.3** adapters: ReportLab, SVG, `python-pptx`; vertical text behind a flag
-- **0.4** a `cards` example that renders real 1080×1440 image sets, and a
-  `SKILL.md` wrapper so agents can call it
+- **0.3** font probing beyond the bundled table, pair compression (「。」 in one
+  em), a Knuth–Plass-style cost function so the last line stops being an orphan
+- **0.4** adapters: ReportLab, SVG, `python-pptx`; vertical text behind a flag
 
 ## License
 

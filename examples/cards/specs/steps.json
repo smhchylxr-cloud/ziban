@@ -1,0 +1,21 @@
+{
+  "kind": "steps",
+  "kicker": "三步接上",
+  "title": "从装到用，不到五分钟",
+  "steps": [
+    {
+      "title": "装上",
+      "desc": "一条 curl 脚本，或者下载签名好的 App。装完 magpie --version 有输出就算成功。"
+    },
+    {
+      "title": "加 provider",
+      "desc": "magpie provider add deepseek sk-xxx。预设只需要填 key，也能直接登录订阅账号。"
+    },
+    {
+      "title": "指定模型",
+      "desc": "magpie claude deepseek/deepseek-v4-pro。新开一个会话才生效，旧会话不会自动切换。"
+    }
+  ],
+  "footer_left": "每日一项目 · 003",
+  "meta": "ziban / cards"
+}

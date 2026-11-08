@@ -71,3 +71,27 @@ def test_no_subcommand_prints_help():
     proc = run([])
     assert proc.returncode == 0
     assert "usage" in proc.stdout.lower()
+
+
+def test_themes_are_listed():
+    proc = run(["themes"])
+    assert proc.returncode == 0, proc.stderr
+    for name in ("ikb", "ink", "citron"):
+        assert name in proc.stdout
+
+
+def test_card_renders_a_spec(tmp_path: Path):
+    pytest.importorskip("PIL", reason="card rendering needs Pillow")
+    spec = Path(__file__).resolve().parents[1] / "examples" / "cards" / "specs" / "cover.json"
+    out = tmp_path / "card.png"
+    proc = run(["card", str(spec), "--theme", "ink", "--out", str(out)])
+    assert proc.returncode == 0, proc.stderr
+    assert out.exists()
+    assert out.stat().st_size > 10_000
+    assert "ink" in proc.stdout
+
+
+def test_card_rejects_a_missing_spec():
+    proc = run(["card", "no-such-spec.json"])
+    assert proc.returncode == 2
+    assert "not found" in proc.stderr

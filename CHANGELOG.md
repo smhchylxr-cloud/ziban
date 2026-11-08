@@ -4,6 +4,36 @@ All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] — 2026-11-09
+
+The library can now finish the job: it draws the lines it broke, and ships four
+card layouts that use it.
+
+### Added
+
+- **`ziban.draw`** — paints laid-out lines and honours the breaker's decisions:
+  compressed punctuation is drawn compressed, hung punctuation crosses the
+  margin, justified lines open the gaps the breaker counted, centred lines are
+  centred on measured width.  Without this half, every caller re-implemented
+  drawing and dropped the adjustments.
+- **`ziban.cards`** — four layouts (`cover` / `list` / `steps` / `note`) that
+  take a plain dict and return a 1080×1440 image plus diagnostics.
+- **`ziban.theme`** — three palettes (`ikb`, `ink`, `citron`) and one type
+  scale; a fourth theme is data, not code.
+- **`ziban.fonts`** — probes Windows / macOS / Linux for a CJK font instead of
+  bundling one, and selects the weight axis on variable fonts.
+- **`ziban card` / `ziban themes`** CLI commands; `examples/cards/build.py`
+  renders 12 cards and a contact sheet, failing loudly on `TEXT_OVERFLOW`.
+- 36 new tests (994 total): rendering, determinism, theme application, font
+  probing, and the drawing primitives.
+
+### Fixed
+
+- **Variable fonts defaulted to Thin.** Noto Sans SC-VF's default instance is
+  weight 100, so every heading rendered in a hairline weight while looking
+  plausible.  The weight axis is now selected explicitly for both regular and
+  bold; `test_bold_is_actually_bolder` guards the regression.
+
 ## [0.1.1] — 2026-11-09
 
 Packaging and metadata only; the engine is unchanged. First release published
