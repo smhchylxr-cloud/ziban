@@ -1,0 +1,33 @@
+# ziban ruleset — a curated subset of W3C CLREQ (中文排版需求).
+# 规则是数据，不是 if-else。改这一张表就能改行为，PR 也只需要改数据。
+#
+# clreq:      https://www.w3.org/TR/clreq/
+# 覆盖范围:    横排、断行禁则、标点挤压、行末悬挂。竖排/注音/标点对齐高级模式不在本版。
+
+version = "0.1.0"
+clreq = "https://www.w3.org/TR/clreq/"
+
+[kinsoku]
+# 避头点：不能出现在行首。CLREQ 3.1.6.1
+head_forbidden = "　，、。．；：？！）〕〉》」』】”’｝］〗〙〛·・…‥ー～％‰℃々〆"
+# 避尾点：不能出现在行尾。CLREQ 3.1.6.1
+tail_forbidden = "（〔〈《「『【“‘｛［〖〘〚"
+
+[compress]
+# 标点挤压：全角标点压到 0.5 em，用于"差一点点放得下"的情况。
+# CLREQ 3.1.6.2 / JLReq 3.1
+compressed_ratio = 0.5
+chars = "，、。．；：？！）〕〉》」』】”’…"
+
+[hang]
+# 行末悬挂：标点可以伸出盒子，最多 max_ratio 个 em，且不超过行宽的 max_share。
+# 第二条约束是为了窄栏：3 个字的栏位不该让一个标点悬出去 1/3 个栏宽。
+# 悬挂优先于回退（回退会白白浪费一个字的位置）。
+max_ratio = 1.0
+max_share = 0.25
+chars = "，、。．；：？！）〕〉》」』】”’…"
+
+[spacing]
+# 中西混排间距：汉字与拉丁字母/数字之间插入的间隙（em）。
+# CLREQ 3.1.3 —— 本版只提供数值，实际插入由渲染后端负责（M2）。
+cjk_latin_gap = 0.25

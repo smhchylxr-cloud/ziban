@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ziban"
+version = "0.1.0"
+description = "CJK typesetting for programmatic renderers: line breaking, kinsoku, punctuation compression, hanging punctuation."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = [
+    "typography",
+    "cjk",
+    "chinese",
+    "line-breaking",
+    "kinsoku",
+    "text-layout",
+    "pillow",
+    "pdf",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Text Processing :: Fonts",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = [
+    'tomli>=1.1.0; python_version < "3.11"',
+]
+
+[project.optional-dependencies]
+pillow = ["pillow>=9.0"]
+dev = ["pytest>=7.0", "pillow>=9.0"]
+
+[project.scripts]
+ziban = "ziban.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/your-name/ziban"
+Issues = "https://github.com/your-name/ziban/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ziban"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
